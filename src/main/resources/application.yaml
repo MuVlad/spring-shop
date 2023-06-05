@@ -1,0 +1,11 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/shop
+    username: postgres
+    password: rootroot
+  flyway:
+    baseline-on-migrate: true
