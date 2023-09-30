@@ -4,7 +4,6 @@ package ru.muvlad.springshop.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -16,8 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import ru.muvlad.springshop.model.Role;
 import ru.muvlad.springshop.service.UserService;
-
-import javax.persistence.Basic;
 
 @Configuration
 @EnableWebSecurity
@@ -52,7 +49,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/ws").permitAll()
                 .antMatchers("/users").hasAnyAuthority(Role.ADMIN.name(), Role.MANAGER.name())
 //                .antMatchers("/users/new").hasAuthority(Role.ADMIN.name())
                 .anyRequest().permitAll()
