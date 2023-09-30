@@ -4,9 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.muvlad.springshop.dto.BucketDTO;
 import ru.muvlad.springshop.dto.BucketDetailDTO;
-import ru.muvlad.springshop.model.Bucket;
-import ru.muvlad.springshop.model.Product;
-import ru.muvlad.springshop.model.User;
+import ru.muvlad.springshop.model.*;
 import ru.muvlad.springshop.repository.BucketRepository;
 import ru.muvlad.springshop.repository.ProductRepository;
 
@@ -23,12 +21,16 @@ public class BucketServiceImpl implements BucketService {
     private final BucketRepository bucketRepository;
     private final ProductRepository productRepository;
     private final UserService userService;
+    private final OrderService orderService;
+
 
     @Autowired
-    public BucketServiceImpl(BucketRepository bucketRepository, ProductRepository productRepository, UserService userService) {
+    public BucketServiceImpl(BucketRepository bucketRepository, ProductRepository productRepository,
+                             UserService userService, OrderService orderService) {
         this.bucketRepository = bucketRepository;
         this.productRepository = productRepository;
         this.userService = userService;
+        this.orderService = orderService;
     }
 
     @Override
@@ -82,5 +84,40 @@ public class BucketServiceImpl implements BucketService {
         bucketDTO.aggregate();
 
         return bucketDTO;
+    }
+
+    @Override
+    public void commitBucketToOrder(String userName) {
+        User user = userService.findByName(userName);
+        if (user == null) {
+            throw new RuntimeException("User is not found");
+        }
+        Bucket bucket = user.getBucket();
+        if (bucket == null || bucket.getProducts().isEmpty()) {
+            return;
+        }
+
+        Order order = new Order();
+        order.setStatus(OrderStatus.NEW);
+        order.setUser(user);
+
+        Map<Product, Long> productWithAmount = bucket.getProducts().stream()
+                .collect(Collectors.groupingBy(product -> product, Collectors.counting()));
+
+        List<OrderDetails> orderDetails = productWithAmount.entrySet().stream()
+                .map(pair -> new OrderDetails(order, pair.getKey(), pair.getValue()))
+                .toList();
+
+        BigDecimal total = BigDecimal.valueOf(orderDetails.stream()
+                .map(detail -> detail.getPrice().multiply(detail.getAmount()))
+                .mapToDouble(BigDecimal::doubleValue).sum());
+
+        order.setDetails(orderDetails);
+        order.setSum(total);
+        order.setAddress("none");
+
+        orderService.saveOrder(order);
+        bucket.getProducts().clear();
+        bucketRepository.save(bucket);
     }
 }
