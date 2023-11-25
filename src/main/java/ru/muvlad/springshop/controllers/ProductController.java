@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import ru.muvlad.springshop.dto.ProductDTO;
 import ru.muvlad.springshop.service.ProductService;
 
@@ -36,5 +37,12 @@ public class ProductController {
         }
         productService.addToUserBucket(id, principal.getName());
         return "redirect:/products";
+    }
+
+    @GetMapping("/{id}")
+    @ResponseBody
+    public ProductDTO getById(@PathVariable Long id) {
+
+        return productService.getById(id);
     }
 }

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.muvlad.springshop.dto.ProductDTO;
 import ru.muvlad.springshop.mapper.ProductMapper;
 import ru.muvlad.springshop.model.Bucket;
+import ru.muvlad.springshop.model.Product;
 import ru.muvlad.springshop.model.User;
 import ru.muvlad.springshop.repository.ProductRepository;
 
@@ -47,5 +48,11 @@ public class ProductServiceImpl implements ProductService {
         } else {
             bucketService.addProducts(bucket, Collections.singletonList(productId));
         }
+    }
+
+    @Override
+    public ProductDTO getById(Long id) {
+        Product product = productRepository.findById(id).orElse(new Product());
+        return ProductMapper.MAPPER.fromProduct(product);
     }
 }
