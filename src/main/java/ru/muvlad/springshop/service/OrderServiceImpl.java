@@ -7,7 +7,7 @@ import ru.muvlad.springshop.repository.OrderRepository;
 import javax.transaction.Transactional;
 
 @Service
-public class OrderServiceImpl implements OrderService{
+public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
 
     public OrderServiceImpl(OrderRepository orderRepository) {

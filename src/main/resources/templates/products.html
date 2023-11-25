@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <title>Product list</title>
-
 </head>
 <body>
 <div th:insert="~{fragments/menu :: #nav-menu}"></div>
 
-<table border="1" align="center" id="table">
+<table border="1" align="center">
   <tr>
     <td>Title</td>
     <td>Price</td>
@@ -20,20 +19,6 @@
     <td><a th:href="@{/products/{id}/bucket(id=${product.id})}">Add to bucket</a></td>
   </tr>
 </table>
-
-<form style="text-align: center">
-  <table align="center">
-    <tr>
-      <td>Title</td>
-      <td><input type="text" id="title"></td>
-    </tr>
-    <tr>
-      <td>Price</td>
-      <td><input type="number" id="price"></td>
-    </tr>
-  </table>
-  <button id="send" type="submit">Submit</button>
-</form>
 
 </body>
 </html>
